@@ -1,4 +1,6 @@
-import { terser } from 'rollup-plugin-terser';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import terser from '@rollup/plugin-terser';  // Alterando a importação do terser para padrão
 
 export default {
   input: 'src/index.js',
@@ -11,5 +13,5 @@ export default {
     },
   },
   external: ['echarts', '@tanstack/table-core'],
-  plugins: [resolve(), commonjs(), terser()],
+  plugins: [resolve(), commonjs(), terser()],  // Adicionando o terser aqui
 };

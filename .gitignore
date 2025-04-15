@@ -41,7 +41,6 @@ Thumbs.db
 *.module.css.d.ts
 
 # Configurações específicas do ECharts e TanStack
-*.config.js
 *.chartConfig.js
 
 # Relatórios de cobertura de testes
@@ -49,3 +48,7 @@ coverage/
 
 # Ignorar todos os arquivos de log de debug do npm
 npm-debug.log*
+
+# Excluir a pasta dist e os arquivos .config.js, exceto o rollup.config.js
+*.config.js
+!rollup.config.js

@@ -13,7 +13,13 @@
     "url": "git+https://github.com/eduardorsjx7/echarts-dashboard-kit.git"
   },
   "keywords": [
-    "echarts", "dashboard", "tabela", "filtros", "interativo", "charts", "react"
+    "echarts",
+    "dashboard",
+    "tabela",
+    "filtros",
+    "interativo",
+    "charts",
+    "react"
   ],
   "author": "",
   "license": "MIT",
@@ -28,8 +34,10 @@
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "rollup": "^3.26.3",
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.1",
-    "@rollup/plugin-commonjs": "^25.0.7"
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^3.26.3",
+    "rollup-plugin-terser": "^7.0.2"
   }
 }
