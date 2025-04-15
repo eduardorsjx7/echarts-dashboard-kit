@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo | ECharts Dashboard Kit</title>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; background: #f6f8fa; }
+    #grafico, #tabela { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>ECharts Dashboard Kit - Demo</h1>
+
+  <div id="grafico" style="width: 600px; height: 400px;"></div>
+  <div id="tabela"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+  <script type="module">
+    import { criarGrafico } from '../src/grafico.js';
+    import { criarTabela } from '../src/tabela.js';
+    import { aplicarFiltros } from '../src/filtro.js';
+
+    const dados = [
+      { categoria: 'A', valor: 30 },
+      { categoria: 'B', valor: 50 },
+      { categoria: 'C', valor: 20 }
+    ];
+
+    const filtro = aplicarFiltros(dados, { categoria: ['A', 'B', 'C'] });
+
+    criarGrafico('grafico', filtro);
+    criarTabela('tabela', filtro);
+  </script>
+</body>
+</html>
