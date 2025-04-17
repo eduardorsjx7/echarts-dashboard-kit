@@ -32,5 +32,6 @@
     atualizar();
   }
 
+  // Expondo no escopo global
   window.criarGrafico = criarGrafico;
 })();
