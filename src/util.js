@@ -15,8 +15,18 @@
     return !isNaN(value) && isFinite(value);
   }
 
-  // Expondo no escopo global
+  // Função para aplicar filtros nos dados
+  function aplicarFiltros(dados, filtros) {
+    return dados.filter(item => {
+      return Object.entries(filtros).every(([campo, valores]) => {
+        return valores.includes(item[campo]);
+      });
+    });
+  }
+
+  // Expondo as funções no escopo global
   window.formatarData = formatarData;
   window.gerarLabels = gerarLabels;
   window.isNumber = isNumber;
+  window.aplicarFiltros = aplicarFiltros; // Expondo a função aplicarFiltros
 })();
