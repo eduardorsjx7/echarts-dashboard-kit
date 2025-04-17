@@ -1,4 +1,3 @@
-// Assume que ECharts já foi carregado via <script src="...echarts.min.js">
 (function () {
   function criarGrafico(el, tipo, parametro, grupo, dados) {
     const chart = echarts.init(el);
@@ -6,9 +5,15 @@
     const atualizar = () => {
       const filtrados = window.obterDadosFiltrados(grupo, dados);
       const contagem = {};
+
+      // Corrigir a contagem, agora somando os valores de cada categoria
       filtrados.forEach(item => {
         const chave = item[parametro];
-        contagem[chave] = (contagem[chave] || 0) + 1;
+        if (contagem[chave] === undefined) {
+          contagem[chave] = item.valor; // Inicializa com o valor
+        } else {
+          contagem[chave] += item.valor; // Acumula o valor
+        }
       });
 
       chart.setOption({
@@ -18,16 +23,18 @@
         yAxis: { type: 'value' },
         series: [{
           type: tipo,
-          data: Object.values(contagem),
+          data: Object.values(contagem), // Passa os valores acumulados
         }]
       });
     };
 
+    // Evento de clique no gráfico
     chart.on('click', (params) => {
       const valor = params.name;
       window.registrarComponente(grupo, parametro, valor);
     });
 
+    // Registra o componente e executa a função de atualização
     window.registrarComponente(grupo, parametro, null, atualizar);
     atualizar();
   }
