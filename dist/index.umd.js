@@ -1,36 +1,35 @@
-const filtros = {};     // { grupo: { campo: Set(valores) } }
-const listeners = {};   // <- Adicione essa linha
+const listeners = {}; // Definido no escopo externo
 
 (function (global, factory) {
   if (typeof module === "object" && typeof module.exports === "object") {
     module.exports = factory(require("echarts")); // Node/CommonJS
   } else {
-    global.echartsDashboardKit = factory(global.echarts); // Browser
+    global.echartsDashboardKit = factory(global.echarts); // Navegador
   }
 })(typeof window !== "undefined" ? window : this, function (echarts) {
   if (!echarts) {
     throw new Error("ECharts não foi carregado. Instale com npm ou inclua via CDN antes de usar a biblioteca.");
   }
 
-  const filtros = {};
+  const filtros = {}; // Correto: usado dentro e retornado
 
   function registrarComponente(grupo, campo, valor, callback) {
     filtros[grupo] = filtros[grupo] || {};
     listeners[grupo] = listeners[grupo] || [];
-  
+
     if (callback) {
       listeners[grupo].push(callback);
     } else {
       if (!valor) return;
-  
+
       filtros[grupo][campo] = filtros[grupo][campo] || new Set();
-  
+
       if (filtros[grupo][campo].has(valor)) {
         filtros[grupo][campo].delete(valor);
       } else {
         filtros[grupo][campo].add(valor);
       }
-  
+
       listeners[grupo].forEach(fn => fn());
     }
   }
@@ -38,32 +37,34 @@ const listeners = {};   // <- Adicione essa linha
   function obterDadosFiltrados(grupo, dados) {
     const ativo = filtros[grupo] || {};
 
-    return dados.filter(item => {
-      return Object.entries(ativo).every(([campo, valores]) => {
-        if (!valores || valores.size === 0) return true;
-        return valores.has(item[campo]);
-      });
-    });
+    return Array.isArray(dados)
+      ? dados.filter(item => {
+          return Object.entries(ativo).every(([campo, valores]) => {
+            if (!valores || valores.size === 0) return true;
+            return valores.has(item[campo]);
+          });
+        })
+      : [];
   }
 
   function limparFiltros(grupo) {
     filtros[grupo] = {};
-    if (filtros[grupo].callback) filtros[grupo].callback();
+    if (listeners[grupo]) listeners[grupo].forEach(fn => fn());
   }
 
   function criarGrafico(el, tipo, parametro, grupo, dados) {
     const chart = echarts.init(el);
 
     const atualizar = () => {
-      const filtrados = window.obterDadosFiltrados(grupo, dados);
+      const filtrados = obterDadosFiltrados(grupo, dados);
       const contagem = {};
-    
+
       filtrados.forEach(item => {
         const chave = item[parametro];
-        const valor = item.valor || 1; // se não tiver 'valor', soma 1
+        const valor = item.valor || 1;
         contagem[chave] = (contagem[chave] || 0) + valor;
       });
-    
+
       chart.setOption({
         title: { text: parametro },
         tooltip: { trigger: 'axis' },
@@ -75,7 +76,7 @@ const listeners = {};   // <- Adicione essa linha
         }]
       });
     };
-    
+
     chart.on('click', (params) => {
       const valor = params.name;
       registrarComponente(grupo, parametro, valor);
@@ -124,6 +125,7 @@ const listeners = {};   // <- Adicione essa linha
     atualizar();
   }
 
+  // Retorna as funções para uso global ou por importação
   return {
     criarGrafico,
     criarTabela,
