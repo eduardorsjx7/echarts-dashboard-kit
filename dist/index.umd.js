@@ -55,17 +55,18 @@ const listeners = {};   // <- Adicione essa linha
     const chart = echarts.init(el);
 
     const atualizar = () => {
-      const filtrados = obterDadosFiltrados(grupo, dados);
+      const filtrados = window.obterDadosFiltrados(grupo, dados);
       const contagem = {};
-
+    
       filtrados.forEach(item => {
         const chave = item[parametro];
-        contagem[chave] = (contagem[chave] || 0) + 1;
+        const valor = item.valor || 1; // se não tiver 'valor', soma 1
+        contagem[chave] = (contagem[chave] || 0) + valor;
       });
-
+    
       chart.setOption({
         title: { text: parametro },
-        tooltip: {},
+        tooltip: { trigger: 'axis' },
         xAxis: { type: 'category', data: Object.keys(contagem) },
         yAxis: { type: 'value' },
         series: [{
@@ -74,7 +75,7 @@ const listeners = {};   // <- Adicione essa linha
         }]
       });
     };
-
+    
     chart.on('click', (params) => {
       const valor = params.name;
       registrarComponente(grupo, parametro, valor);
