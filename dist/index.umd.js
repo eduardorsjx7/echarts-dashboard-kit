@@ -1,3 +1,6 @@
+const filtros = {};     // { grupo: { campo: Set(valores) } }
+const listeners = {};   // <- Adicione essa linha
+
 (function (global, factory) {
   if (typeof module === "object" && typeof module.exports === "object") {
     module.exports = factory(require("echarts")); // Node/CommonJS
