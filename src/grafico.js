@@ -1,44 +1,65 @@
 (function () {
-  function criarGrafico(el, tipo, parametro, grupo, dados) {
+  function criarGrafico(el, tipo, campoValor, grupo, dados, campoY = 'valor', agregacao = 'soma') {
     const chart = echarts.init(el);
 
     const atualizar = () => {
       const filtrados = window.obterDadosFiltrados(grupo, dados);
       const contagem = {};
 
-      // Corrigir a contagem, agora somando os valores de cada categoria
       filtrados.forEach(item => {
-        const chave = item[parametro];
-        if (contagem[chave] === undefined) {
-          contagem[chave] = item.valor; // Inicializa com o valor
+        const chave = item[campoValor];
+        const valor = Number(item[campoY]) || 0;
+
+        if (!contagem[chave]) contagem[chave] = [];
+
+        contagem[chave].push(valor);
+      });
+
+      const labels = Object.keys(contagem);
+      const valores = labels.map(label => {
+        const lista = contagem[label];
+        if (agregacao === 'media') {
+          return lista.reduce((a, b) => a + b, 0) / lista.length;
         } else {
-          contagem[chave] += item.valor; // Acumula o valor
+          return lista.reduce((a, b) => a + b, 0); // soma por padrão
         }
       });
 
-      chart.setOption({
-        title: { text: parametro },
-        tooltip: {},
-        xAxis: { type: 'category', data: Object.keys(contagem) },
-        yAxis: { type: 'value' },
-        series: [{
-          type: tipo,
-          data: Object.values(contagem), // Passa os valores acumulados
-        }]
-      });
+      const series =
+        tipo === 'pie' || tipo === 'doughnut'
+          ? [{
+              type: 'pie',
+              data: labels.map((label, i) => ({
+                name: label,
+                value: valores[i]
+              }))
+            }]
+          : [{
+              type,
+              data: valores
+            }];
+
+      const option = {
+        title: { text: campoValor },
+        tooltip: { trigger: tipo === 'pie' || tipo === 'doughnut' ? 'item' : 'axis' },
+        legend: tipo === 'pie' || tipo === 'doughnut' ? { orient: 'vertical', left: 'left' } : {},
+        xAxis: tipo === 'pie' || tipo === 'doughnut' ? undefined : { type: 'category', data: labels },
+        yAxis: tipo === 'pie' || tipo === 'doughnut' ? undefined : { type: 'value' },
+        series: series
+      };
+
+      chart.setOption(option);
     };
 
-    // Evento de clique no gráfico
+    // Clique para filtro
     chart.on('click', (params) => {
       const valor = params.name;
-      window.registrarComponente(grupo, parametro, valor);
+      window.registrarComponente(grupo, campoValor, valor);
     });
 
-    // Registra o componente e executa a função de atualização
-    window.registrarComponente(grupo, parametro, null, atualizar);
+    window.registrarComponente(grupo, campoValor, null, atualizar);
     atualizar();
   }
 
-  // Expondo no escopo global
   window.criarGrafico = criarGrafico;
 })();

@@ -5,14 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Demo | ECharts Dashboard Kit</title>
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 2rem;
-      background: #f6f8fa;
-    }
-    #grafico, #tabela {
-      margin-top: 2rem;
-    }
+    body { font-family: sans-serif; margin: 2rem; background: #f6f8fa; }
+    #grafico, #tabela { margin-top: 2rem; }
   </style>
 </head>
 <body>
@@ -21,26 +15,21 @@
   <div id="grafico" style="width: 600px; height: 400px;"></div>
   <div id="tabela"></div>
 
-  <!-- Carregar ECharts a partir do seu repositório no GitHub Pages -->
-  <script src="https://eduardorsjx7.github.io/echarts-dashboard-kit/src/libs/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+  <script type="module">
+    import { criarGrafico } from '../src/grafico.js';
+    import { criarTabela } from '../src/tabela.js';
+    import { aplicarFiltros } from '../src/filtro.js';
 
-  <!-- Scripts da biblioteca hospedada no GitHub Pages (versão com funções no window) -->
-  <script src="https://eduardorsjx7.github.io/echarts-dashboard-kit/src/util.js"></script>
-  <script src="https://eduardorsjx7.github.io/echarts-dashboard-kit/src/filtro.js"></script>
-  <script src="https://eduardorsjx7.github.io/echarts-dashboard-kit/src/grafico.js"></script>
-  <script src="https://eduardorsjx7.github.io/echarts-dashboard-kit/src/tabela.js"></script>
-
-  <!-- Script principal -->
-  <script>
     const dados = [
-      { categoria: 'A', valor: 10 },
-      { categoria: 'B', valor: 1000 },
+      { categoria: 'A', valor: 30 },
+      { categoria: 'B', valor: 50 },
       { categoria: 'C', valor: 20 }
     ];
 
     const filtro = aplicarFiltros(dados, { categoria: ['A', 'B', 'C'] });
 
-    criarGrafico(document.getElementById('grafico'), 'bar', 'categoria', 'grupo1', filtro);
+    criarGrafico('grafico', filtro);
     criarTabela('tabela', filtro);
   </script>
 </body>
