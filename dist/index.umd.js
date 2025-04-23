@@ -13,21 +13,22 @@
 
   function registrarComponente(grupo, campo, valor, callback) {
     filtros[grupo] = filtros[grupo] || {};
-
+    listeners[grupo] = listeners[grupo] || [];
+  
     if (callback) {
-      filtros[grupo].callback = callback;
+      listeners[grupo].push(callback);
     } else {
       if (!valor) return;
-
+  
       filtros[grupo][campo] = filtros[grupo][campo] || new Set();
-
+  
       if (filtros[grupo][campo].has(valor)) {
         filtros[grupo][campo].delete(valor);
       } else {
         filtros[grupo][campo].add(valor);
       }
-
-      if (filtros[grupo].callback) filtros[grupo].callback();
+  
+      listeners[grupo].forEach(fn => fn());
     }
   }
 
