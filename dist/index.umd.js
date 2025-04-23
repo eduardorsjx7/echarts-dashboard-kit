@@ -54,34 +54,39 @@ const listeners = {}; // Definido no escopo externo
 
   function criarGrafico(el, tipo, parametro, grupo, dados) {
     const chart = echarts.init(el);
-
+  
     const atualizar = () => {
       const filtrados = obterDadosFiltrados(grupo, dados);
       const contagem = {};
-
+  
       filtrados.forEach(item => {
         const chave = item[parametro];
         const valor = item.valor || 1;
         contagem[chave] = (contagem[chave] || 0) + valor;
       });
-
-      chart.setOption({
+  
+      const chartTipo = tipo === 'area' ? 'line' : tipo;
+  
+      const option = {
         title: { text: parametro },
         tooltip: { trigger: 'axis' },
         xAxis: { type: 'category', data: Object.keys(contagem) },
         yAxis: { type: 'value' },
         series: [{
-          type: tipo,
+          type: chartTipo,
           data: Object.values(contagem),
+          ...(tipo === 'area' ? { areaStyle: {} } : {})  // Ativa área se for tipo 'area'
         }]
-      });
+      };
+  
+      chart.setOption(option);
     };
-
+  
     chart.on('click', (params) => {
       const valor = params.name;
       registrarComponente(grupo, parametro, valor);
     });
-
+  
     registrarComponente(grupo, parametro, null, atualizar);
     atualizar();
   }
