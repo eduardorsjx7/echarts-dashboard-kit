@@ -13,6 +13,10 @@ const listeners = {}; // Definido no escopo externo
 
   const filtros = {}; // Correto: usado dentro e retornado
 
+
+ 
+  // Func de registrar componete para mostar como uma legenda 
+
   function registrarComponente(grupo, campo, valor, callback) {
     filtros[grupo] = filtros[grupo] || {};
     listeners[grupo] = listeners[grupo] || [];
@@ -34,6 +38,9 @@ const listeners = {}; // Definido no escopo externo
     }
   }
 
+
+  // Retorna um arry ao inddentifiica o mocelo do dado 
+
   function obterDadosFiltrados(grupo, dados) {
     const ativo = filtros[grupo] || {};
 
@@ -47,10 +54,19 @@ const listeners = {}; // Definido no escopo externo
       : [];
   }
 
+
+
+
+
   function limparFiltros(grupo) {
     filtros[grupo] = {};
     if (listeners[grupo]) listeners[grupo].forEach(fn => fn());
   }
+
+
+
+// Cria grafico e atuliza os graficos ao atualizar os dados 
+
 
   function criarGrafico(el, tipo, parametro, grupo, dados) {
     const chart = echarts.init(el);
@@ -91,6 +107,13 @@ const listeners = {}; // Definido no escopo externo
     atualizar();
   }
 
+//---------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+
+//Cria a func de criar tabela 
+
+
+
   function criarTabela(el, colunas, grupo, dados) {
     const atualizar = () => {
       const filtrados = obterDadosFiltrados(grupo, dados);
@@ -129,6 +152,8 @@ const listeners = {}; // Definido no escopo externo
     colunas.forEach(c => registrarComponente(grupo, c, null, atualizar));
     atualizar();
   }
+
+
 
   // Retorna as funções para uso global ou por importação
   return {
